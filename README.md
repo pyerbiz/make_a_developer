@@ -1,2 +1,2 @@
 # exploring_python
-Experiments on python language done through reference materiall like books and tutorials
+Experiments on python language done through reference material like books and tutorials
