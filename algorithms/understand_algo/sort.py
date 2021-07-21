@@ -1,7 +1,7 @@
 """ a module with multiple sorting methods"""
 
 
-class sort:
+class SortBase:
     def __init__(self, arr) -> None:
         self.arr = arr
 
