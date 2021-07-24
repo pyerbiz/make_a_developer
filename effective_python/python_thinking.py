@@ -1,7 +1,7 @@
 """ module containing callables for explaining python concepts"""
 
 
-class Items:
+class CharEncode:
     def __init__(self) -> None:
         pass
 
@@ -23,3 +23,24 @@ class Items:
         else:
             value = bytes_or_string
         return value
+
+
+class UnpackingSwap:
+    """example unpacking to swap value without creating a temp var
+    using bubble sort"""
+
+    def bubble_sort_temp_var(a):
+        for _ in range(len(a)):
+            for i in range(1, len(a)):
+                if a[i] < a[i - 1]:
+                    temp = a[i]
+                    a[i] = a[i - 1]
+                    a[i - 1] = temp
+        return a
+
+    def bubble_sort(a):
+        for _ in range(len(a)):
+            for i in range(1, len(a)):
+                if a[i] < a[i - 1]:
+                    a[i - 1], a[i] = a[i], a[i - 1]
+        return a
