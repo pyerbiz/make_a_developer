@@ -16,8 +16,8 @@ graph["thom"] = []
 graph["jonny"] = []
 
 person_is_seller = lambda x: x[-1] == "m"
-search_queue = deque()
-search_queue += graph["you"]  # your neighbours
+# search_queue = deque()
+# search_queue += graph["you"]  # your neighbours
 
 
 def breadth_first_search(name):
