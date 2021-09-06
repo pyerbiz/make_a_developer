@@ -1,0 +1,18 @@
+{
+"type":"record",
+"name":"weather.value",
+"namespace":"com.udacity",
+"fields":[
+  {
+   "name":"temperature","type":"float"
+  },
+  {
+   "name":"status",
+    "type":{
+        "name":"statusType",
+        "type":"enum",
+        "symbols":["sunny","partly_cloudy","cloudy","windy", "precipitation"]
+   }
+    }
+]
+}
