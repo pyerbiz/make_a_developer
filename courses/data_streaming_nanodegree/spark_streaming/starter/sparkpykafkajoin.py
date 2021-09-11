@@ -30,6 +30,14 @@ schema_redis_kafka = StructType(
 )
 
 # TO-DO: create a StructType for the Customer JSON that comes from Redis
+schema_json_kafka = StructType(
+    [
+        StructField("customerName", StringType()),
+        StructField("email", StringType()),
+        StructField("phone", StringType()),
+        StructField("birthYear", StringType())
+    ]
+)
 
 # TO-DO: create a StructType for the Kafka stedi-events topic which has the Customer Risk JSON that comes from Redis
 
