@@ -1,8 +1,8 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import (base64, col, expr, from_json, split,
                                    to_json, unbase64)
-from pyspark.sql.types import (ArrayType, BooleanType, DateType, StringType,
-                               StructField, StructType)
+from pyspark.sql.types import (ArrayType, BooleanType, DateType, FloatType,
+                               StringType, StructField, StructType)
 
 # TO-DO: create a StructType for the Kafka redis-server topic which has all changes made to Redis
 schema_redis_kafka = StructType(
@@ -40,7 +40,13 @@ schema_json_kafka = StructType(
 )
 
 # TO-DO: create a StructType for the Kafka stedi-events topic which has the Customer Risk JSON that comes from Redis
-
+schema_events_kafka = StructType(
+    [
+        StructField("customer", StringType()),
+        StructField("score", FloatType()),
+        StructField("riskDate", DateType())
+    ]
+)
 # TO-DO: create a spark application object
 
 # TO-DO: set the spark log level to WARN
