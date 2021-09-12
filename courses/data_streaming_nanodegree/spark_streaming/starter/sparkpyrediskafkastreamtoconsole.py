@@ -1,15 +1,10 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import base64, col, expr, from_json, split, to_json, unbase64
-from pyspark.sql.types import (
-    ArrayType,
-    BooleanType,
-    DateType,
-    StringType,
-    StructField,
-    StructType,
-)
+from pyspark.sql.functions import (base64, col, expr, from_json, split,
+                                   to_json, unbase64)
+from pyspark.sql.types import (ArrayType, BooleanType, DateType, StringType,
+                               StructField, StructType)
 
-# TO-DO: create a StructType for the Kafka redis-server topic which has all changes made to Redis - before Spark 3.0.0, schema inference is not automatic
+# TO-DO: create a StructType for the Kafka redis-server topic which has all changes made to Redis
 
 # TO-DO: create a StructType for the Customer JSON that comes from Redis- before Spark 3.0.0, schema inference is not automatic
 
