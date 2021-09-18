@@ -168,8 +168,16 @@ emailAndBirthYearStreamingDF = emailAndBirthDayStreamingDF \
 
 # TO-DO: using the spark application object, read a streaming dataframe from the Kafka topic stedi-events as the source
 # Be sure to specify the option that reads all the events from the topic including those that were published before you started the spark stream
+DFkafkaEventsRaw = spark\
+    .readStream\
+    .format("kafka")\
+    .option("kafka.bootstrap.servers", "localhost:9092")\
+    .option("subscribe","stedi-events")\
+    .option("startingOffsets","earliest")\
+    .load()
 
 # TO-DO: cast the value column in the streaming dataframe as a STRING
+DFkafkaEvents = DFkafkaEventsRaw.selectExpr("cast(value as string) value")
 
 # TO-DO: parse the JSON from the single column "value" with a json object in it, like this:
 # +------------+
@@ -186,10 +194,15 @@ emailAndBirthYearStreamingDF = emailAndBirthDayStreamingDF \
 # +------------+-----+-----------+
 #
 # storing them in a temporary view called CustomerRisk
+DFkafkaEvents.withColumn("value", from_json("value", DFkafkaEvents))\
+             .select(col('value.customer'), col('value.score'), col('value.riskDate'))\
+             .createOrReplaceTempView("CustomerRisk")
 
 # TO-DO: execute a sql statement against a temporary view, selecting the customer and the score from the temporary view, creating a dataframe called customerRiskStreamingDF
+customerRiskStreamingDF = spark.sql("select customer, score from CustomerRisk")
 
 # TO-DO: join the streaming dataframes on the email address to get the risk score and the birth year in the same dataframe
+stediEnrichedDF = customerRiskStreamingDF.join(emailAndBirthYearStreamingDF, expr("customer = email"))
 
 # TO-DO: sink the joined dataframes to a new kafka topic to send the data to the STEDI graph application
 # +--------------------+-----+--------------------+---------+
@@ -204,3 +217,13 @@ emailAndBirthYearStreamingDF = emailAndBirthDayStreamingDF \
 # +--------------------+-----+--------------------+---------+
 #
 # In this JSON Format {"customer":"Santosh.Fibonnaci@test.com","score":"28.5","email":"Santosh.Fibonnaci@test.com","birthYear":"1963"}
+stediEnrichedDF.selectExpr(
+  "cast(customer as string) as key",
+  "to_json(struct(*)) as value")\
+    .writeStream \
+    .format("kafka")\
+    .option("kafka.bootstrap.servers", "localhost:9092")\
+    .option("topic", "stedi-enriched")\
+    .option("checkpointLocation", "/tmp/kafkacheckpoint")\
+    .start()\
+    .awaitTermination()
