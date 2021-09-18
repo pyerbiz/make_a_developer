@@ -5,7 +5,7 @@ from pyspark.sql.types import (ArrayType, BooleanType, DateType, FloatType,
 
 # TO-DO: using the spark application object, read a streaming dataframe from the Kafka topic stedi-events as the source
 # Be sure to specify the option that reads all the events from the topic including those that were published before you started the spark stream
-spark = SparkSession.builder.appName("")
+spark = SparkSession.builder.appName("eventsApp").getOrCreate()
 spark.sparkContext.setLogLevel('WARN')
 
 schema_events_kafka = StructType(
@@ -62,5 +62,5 @@ customerRiskStreamingDF = spark.sql("select customer, score from CustomerRisk")
 customerRiskStreamingDF.writeStream.outputMode("append").format("console").start().awaitTermination()
 
 # Run the python script by running the command from the terminal:
-# /home/workspace/submit-event-kafka-streaming.sh
+# /home/workspace/submit-event-kafkastreaming.sh
 # Verify the data looks correct

@@ -11,21 +11,13 @@ schema_redis_kafka = StructType(
         StructField("existType", StringType()),
         StructField("Ch", BooleanType()),
         StructField("Incr", BooleanType()),
-        StructField(
-            "zSetEntries",
-            ArrayType(
-                StructType(
-                    [
-                        StructType(
-                            [
-                                StructField("element", StringType()),
-                                StructField("score", StringType()),
-                            ]
-                        )
-                    ]
-                )
-            ),
-        ),
+        StructField("zSetEntries", ArrayType( \
+            StructType([
+                StructField("element", StringType()), \
+                StructField("Score", FloatType()) \
+                ])) \
+                    ),
+
     ]
 )
 
@@ -110,7 +102,7 @@ DFRedisServer \
 # the reason we do it this way is that the syntax available select against a view is different than a dataframe,
 # and it makes it easy to select the nth element of an array in a sql column
 DFzSetEntries = spark.sql(
-    "select key, zSetEntries[0].element as encodedCustomer from RedisSortedSet"
+    "select zSetEntries[0].element as encodedCustomer from RedisSortedSet"
     )
 
 
@@ -149,7 +141,7 @@ DFzSetEntries \
 
 # TO-DO: JSON parsing will set non-existent fields to null, so let's select just the fields we want, where they are not null as a new dataframe called emailAndBirthDayStreamingDF
 emailAndBirthDayStreamingDF = spark.sql(
-    """select email, birthday from CustomerRecords where email is not null and birthDay is not null"""
+    """select email, birthDay from CustomerRecords where email is not null and birthDay is not null"""
     )
 
 # TO-DO: Split the birth year as a separate field from the birthday
@@ -194,7 +186,7 @@ DFkafkaEvents = DFkafkaEventsRaw.selectExpr("cast(value as string) value")
 # +------------+-----+-----------+
 #
 # storing them in a temporary view called CustomerRisk
-DFkafkaEvents.withColumn("value", from_json("value", DFkafkaEvents))\
+DFkafkaEvents.withColumn("value", from_json("value", schema_events_kafka))\
              .select(col('value.customer'), col('value.score'), col('value.riskDate'))\
              .createOrReplaceTempView("CustomerRisk")
 

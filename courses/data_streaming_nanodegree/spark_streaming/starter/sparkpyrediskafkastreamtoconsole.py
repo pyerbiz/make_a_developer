@@ -11,21 +11,13 @@ schema_redis_kafka = StructType(
         StructField("existType", StringType()),
         StructField("Ch", BooleanType()),
         StructField("Incr", BooleanType()),
-        StructField(
-            "zSetEntries",
-            ArrayType(
-                StructType(
-                    [
-                        StructType(
-                            [
-                                StructField("element", StringType()),
-                                StructField("score", StringType()),
-                            ]
-                        )
-                    ]
-                )
-            ),
-        ),
+        StructField("zSetEntries", ArrayType( \
+            StructType([
+                StructField("element", StringType()), \
+                StructField("Score", FloatType()) \
+                ])) \
+                    ),
+
     ]
 )
 # TO-DO: create a StructType for the Customer JSON that comes from Redis- before Spark 3.0.0, schema inference is not automatic
@@ -107,7 +99,7 @@ DFRedisServer \
 # TO-DO: execute a sql statement against a temporary view, which statement takes the element field from the 0th element in the array of structs and create a column called encodedCustomer
 # the reason we do it this way is that the syntax available select against a view is different than a dataframe, and it makes it easy to select the nth element of an array in a sql column
 DFzSetEntries = spark.sql(
-    "select key, zSetEntries[0].element as encodedCustomer from RedisSortedSet"
+    "select zSetEntries[0].element as encodedCustomer from RedisSortedSet"
     )
 # TO-DO: take the encodedCustomer column which is base64 encoded at first like this:
 # +--------------------+
@@ -145,7 +137,7 @@ DFzSetEntries \
 
 # TO-DO: JSON parsing will set non-existent fields to null, so let's select just the fields we want, where they are not null as a new dataframe called emailAndBirthDayStreamingDF
 emailAndBirthDayStreamingDF = spark.sql(
-    """select email, birthday from CustomerRecords where email is not null and birthDay is not null"""
+    """select email, birthDay from CustomerRecords where email is not null and birthDay is not null"""
     )
 
 # TO-DO: Split the birth year as a separate field from the birthday
