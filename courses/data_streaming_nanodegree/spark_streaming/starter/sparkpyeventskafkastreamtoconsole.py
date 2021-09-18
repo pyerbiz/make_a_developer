@@ -7,7 +7,8 @@ from pyspark.sql.types import (ArrayType, BooleanType, DateType, FloatType,
 # Be sure to specify the option that reads all the events from the topic including those that were published before you started the spark stream
 spark = SparkSession.builder.appName("")
 spark.sparkContext.setLogLevel('WARN')
-kafkaEventschema = StructType (
+
+schema_events_kafka = StructType(
     [
         StructField("customer", StringType()),
         StructField("score", FloatType()),
@@ -40,7 +41,14 @@ kafkaEventsDF = kafkaEventsDF.selectExpr("cast(value as string) value")
 # +------------+-----+-----------+
 #
 # storing them in a temporary view called CustomerRisk
+kafkaEventsDF.withColumn("value", from_json("value", schema_events_kafka))\
+             .select(
+                 col('value.customer'),
+                  col('value.score'),
+                   col('value.riskDate'))\
+             .createOrReplaceTempView("CustomerRisk")
 # TO-DO: execute a sql statement against a temporary view, selecting the customer and the score from the temporary view, creating a dataframe called customerRiskStreamingDF
+customerRiskStreamingDF = spark.sql("select customer, score from CustomerRisk")
 # TO-DO: sink the customerRiskStreamingDF dataframe to the console in append mode
 #
 # It should output like this:
@@ -50,6 +58,9 @@ kafkaEventsDF = kafkaEventsDF.selectExpr("cast(value as string) value")
 # +--------------------+-----+
 # |Spencer.Davis@tes...| 8.0|
 # +--------------------+-----
+
+customerRiskStreamingDF.writeStream.outputMode("append").format("console").start().awaitTermination()
+
 # Run the python script by running the command from the terminal:
 # /home/workspace/submit-event-kafka-streaming.sh
 # Verify the data looks correct
