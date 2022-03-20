@@ -1,31 +1,95 @@
+default_stages: [commit]
+default_language_version:
+  python: python3
+minimum_pre_commit_version: "1.20.0"
+
 repos:
--   repo: https://github.com/pre-commit/pre-commit-hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.2.0
     hooks:
-    -   id: check-ast
-    -   id: check-byte-order-marker
-    -   id: check-case-conflict
-    -   id: check-docstring-first
-    -   id: check-executables-have-shebangs
-    -   id: check-json
-    -   id: check-yaml
-    -   id: debug-statements
-    -   id: detect-private-key
-    -   id: end-of-file-fixer
-    -   id: trailing-whitespace
-    -   id: mixed-line-ending
--   repo: https://github.com/pycqa/isort
-    rev: 5.8.0
-    hooks:
-    -   id: isort
-    name: isort (python)
--   repo: https://github.com/asottile/pyupgrade
+      - id: check-ast
+      - id: check-byte-order-marker
+      - id: check-case-conflict
+      - id: check-json
+      - id: check-yaml
+      - id: debug-statements
+      - id: detect-private-key
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: mixed-line-ending
+  - repo: https://github.com/asottile/pyupgrade
     rev: v2.7.2
     hooks:
-    -   id: pyupgrade
+      - id: pyupgrade
         args: [--py36-plus]
--   repo: https://github.com/asottile/blacken-docs
+  - repo: https://github.com/psf/black
+    rev: 21.12b0
+    hooks:
+      - id: black
+        args:
+        - --line-length=79
+  - repo: https://github.com/PyCQA/autoflake
+    rev: v1.4
+    hooks:
+      - id: autoflake
+        language: python
+        entry: bash -c 'autoflake "$@";' --
+        args:
+          [
+            "--in-place",
+            "--remove-all-unused-imports",
+            "--remove-unused-variables",
+            "--expand-star-imports",
+            "--ignore-init-module-imports",
+          ]
+        files: \.py$
+
+  - repo: https://gitlab.com/pycqa/flake8
+    rev: "3.8.2"
+    hooks:
+      - id: flake8
+        additional_dependencies:
+          - flake8-bugbear
+          - flake8-comprehensions
+          - flake8-simplify
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v0.812
+    hooks:
+      - id: mypy
+        exclude: hooks/tests
+
+  - repo: https://github.com/best-doctor/pre-commit-hooks
+    rev: v1.0.4
+    hooks:
+      - id: mccabe-complexity
+        name: Check functions complexity
+        language: python
+      - id: expr-complexity
+        name: Check expressions complexity
+        exclude: /samples/
+        language: python
+      - id: no-asserts
+        name: Check no asserts in code
+        language: python
+        exclude: /tests/
+      - id: test-naming
+        name: Check if tests named appropriately
+        language: python
+      - id: line-count
+        name: Check number of lines in python files
+        language: python
+      - id: old-style-annotations
+        name: Check old-style annotations
+        language: python
+  - repo: https://github.com/asottile/blacken-docs
     rev: v1.8.0
     hooks:
-    -   id: blacken-docs
+      - id: blacken-docs
         additional_dependencies: [black==20.8b1]
+  - repo: https://github.com/econchick/interrogate
+    rev: 1.4.0
+    hooks:
+      - id: interrogate
+        name: Check docstrings are present
+        args: [-v, -i, --fail-under=30]
