@@ -1,5 +1,7 @@
-import dash_core_components as dcc
-import dash_html_components as html
+# import dash_core_components as dcc
+# import dash_html_components as html
+from dash import dcc
+from dash import html
 
 # Connect to main app.py file
 from app import app
@@ -11,6 +13,7 @@ from dash.dependencies import Input, Output
 app.layout = html.Div(
     [
         dcc.Location(id="url", refresh=False),
+        dcc.Store(id="publisher", storage_type="local"),
         html.Div(
             [
                 dcc.Link("Video Games|", href="/apps/vgames"),
@@ -42,4 +45,4 @@ def display_page(pathname):
 
 
 if __name__ == "__main__":
-    app.run_server(debug=False)
+    app.run_server(debug=True)
