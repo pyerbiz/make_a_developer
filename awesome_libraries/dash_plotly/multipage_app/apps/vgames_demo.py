@@ -27,7 +27,7 @@ sales_list = [
 
 layout = html.Div(
     [
-        html.H1("Video Games Sales", style={"textAlign": "center"}),
+        html.H1("Video Games Rank", style={"textAlign": "center"}),
         html.Div(
             [
                 html.Div(
@@ -80,7 +80,7 @@ layout = html.Div(
     [
         Input(component_id="genre-dropdown", component_property="value"),
         Input(component_id="sales-dropdown", component_property="value"),
-        Input(component_id="publisher", component_property="value"),
+        Input(component_id="publisher-dropdown", component_property="value"),
     ],
 )
 def display_value(genre_chosen, sales_chosen, publisher):
