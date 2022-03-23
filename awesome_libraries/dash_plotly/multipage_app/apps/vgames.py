@@ -7,7 +7,7 @@ from dash import html
 import pandas as pd
 import plotly.express as px
 from app import app
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 
 # from pb_list import publisher_list
 # get relative data folder
@@ -80,10 +80,14 @@ layout = html.Div(
     [
         Input(component_id="genre-dropdown", component_property="value"),
         Input(component_id="sales-dropdown", component_property="value"),
-        Input(component_id="publisher", component_property="value"),
+        Input(component_id="publisher-dropdown", component_property="value"),
+        Input("genre_item", "modified_timestamp"),
     ],
+    [State("genre_item", "data")],
 )
-def display_value(genre_chosen, sales_chosen, publisher):
+def display_value(
+    genre_chosen, sales_chosen, publisher_item, modified_timestamp, genre_item
+):
 
     """makes figure based on inputs
 
@@ -97,9 +101,11 @@ def display_value(genre_chosen, sales_chosen, publisher):
 
     # dfv_fltrd = dfv[dfv["Genre"] == genre_chosen]
     # dfv_fltrd = dfv.nlargest(10, sales_chosen)
-    print(publisher)
-    dfv_fltrd = dfv[dfv["Publisher"] == publisher]
-    dfv_fltrd.to_csv("x.csv")
+
+    print(f"modified_timestamp:{modified_timestamp}")
+    print(genre_item)
+    dfv_fltrd = dfv[dfv["Genre"] == genre_item]
+    dfv_fltrd = dfv_fltrd[dfv_fltrd["Publisher"] == publisher_item]
     print(dfv_fltrd.shape)
     fig = px.bar(dfv_fltrd, x="Video Game", y=sales_chosen, color="Platform")
     fig = fig.update_yaxes(tickprefix="$", ticksuffix="M")
