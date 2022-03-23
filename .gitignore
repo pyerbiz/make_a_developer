@@ -2,3 +2,4 @@
 /*_env/*
 /*.ipynb
 *.drawio
+__pycache__

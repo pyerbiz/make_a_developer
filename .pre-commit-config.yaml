@@ -92,4 +92,4 @@ repos:
     hooks:
       - id: interrogate
         name: Check docstrings are present
-        args: [-v, -i, --fail-under=30]
+        args: [-v, -i, --fail-under=10]

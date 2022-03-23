@@ -32,7 +32,7 @@ layout = html.Div(
             [
                 html.Div(
                     dcc.Dropdown(
-                        id="genre-dropdown",
+                        id="genre-dropdown-rank",
                         value="Strategy",
                         clearable=False,
                         options=[
@@ -40,22 +40,22 @@ layout = html.Div(
                             for x in sorted(dfv.Genre.unique())
                         ],
                     ),
-                    className="six columns",
+                    className="six columns-rank",
                 ),
                 html.Div(
                     dcc.Dropdown(
-                        id="sales-dropdown",
+                        id="sales-dropdown-rank",
                         value="EU Sales",
                         clearable=False,
                         persistence=True,
                         persistence_type="memory",
                         options=[{"label": x, "value": x} for x in sales_list],
                     ),
-                    className="six columns",
+                    className="six columns-rank",
                 ),
                 html.Div(
                     dcc.Dropdown(
-                        id="publisher-dropdown",
+                        id="publisher-dropdown-rank",
                         value=dfv.Publisher.unique()[:10][0],
                         clearable=False,
                         persistence=True,
@@ -65,25 +65,28 @@ layout = html.Div(
                             for x in dfv.Publisher.unique()[:10]
                         ],
                     ),
-                    className="six columns",
+                    className="six columns-rank",
                 ),
             ],
-            className="row",
+            className="row-rank",
         ),
-        dcc.Graph(id="my-bar", figure={}),
+        dcc.Graph(id="my-bar-rank", figure={}),
     ]
 )
 
 
 @app.callback(
-    Output(component_id="my-bar", component_property="figure"),
+    Output(component_id="my-bar-rank", component_property="figure"),
     [
-        Input(component_id="genre-dropdown", component_property="value"),
-        Input(component_id="sales-dropdown", component_property="value"),
-        Input(component_id="publisher-dropdown", component_property="value"),
+        Input(component_id="genre-dropdown-rank", component_property="value"),
+        Input(component_id="sales-dropdown-rank", component_property="value"),
+        Input(
+            component_id="publisher-dropdown-rank", component_property="value"
+        ),
+        Input("genre_item", "data"),
     ],
 )
-def display_value(genre_chosen, sales_chosen, publisher):
+def display_value(genre_chosen, sales_chosen, publisher_item, genre_item):
 
     """makes figure based on inputs
 
@@ -97,10 +100,12 @@ def display_value(genre_chosen, sales_chosen, publisher):
 
     # dfv_fltrd = dfv[dfv["Genre"] == genre_chosen]
     # dfv_fltrd = dfv.nlargest(10, sales_chosen)
-    print(publisher)
-    dfv_fltrd = dfv[dfv["Publisher"] == publisher]
-    dfv_fltrd.to_csv("x.csv")
+    print(genre_item)
+    print(dfv.shape)
+    dfv_fltrd = dfv[dfv["Genre"] == genre_item]
+    print(dfv.shape)
+    dfv_fltrd = dfv_fltrd[dfv_fltrd["Publisher"] == publisher_item]
     print(dfv_fltrd.shape)
-    fig = px.bar(dfv_fltrd, x="Video Game", y=sales_chosen, color="Platform")
+    fig = px.bar(dfv_fltrd, x="Platform", y=sales_chosen)
     fig = fig.update_yaxes(tickprefix="$", ticksuffix="M")
     return fig
