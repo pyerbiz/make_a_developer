@@ -19,6 +19,7 @@ x, y = data.index, data["HoleDepth (ft)"]
 
 # Example app.
 figure = dict(data=[{'x': [], 'y': []}]) #layout=dict(xaxis=dict(range=[0, 1000000]), yaxis=dict(range=[0, 25000])))
+
 app = dash.Dash(__name__, update_title=None)  # remove "Updating..." from title
 app.layout = html.Div([dcc.Graph(id='graph', figure=figure), dcc.Interval(id="interval")])
 
