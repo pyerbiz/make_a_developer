@@ -1,14 +1,31 @@
-import plotly.express as px
+import plotly.graph_objects as go
 
-df = px.data.gapminder().query("country == 'Canada'")
-fig = px.bar(
-    df,
-    x="year",
-    y="pop",
-    hover_data=["lifeExp", "gdpPercap"],
-    color="lifeExp",
-    labels={"pop": "population of Canada"},
-    height=400,
+fig = go.Figure(
+    go.Scatter(
+        x=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+        y=[
+            28.8,
+            28.5,
+            37,
+            56.8,
+            69.7,
+            79.7,
+            78.5,
+            77.8,
+            74.1,
+            62.6,
+            45.3,
+            39.9,
+        ],
+    )
 )
-print(df)
+
+fig.update_layout(
+    xaxis=dict(
+        tickmode="array",
+        tickvals=[1, 3, 5, 7, 9, 11],
+        ticktext=["One", "Three", "Five", "Seven", "Nine", "Eleven"],
+    )
+)
+
 fig.show()
