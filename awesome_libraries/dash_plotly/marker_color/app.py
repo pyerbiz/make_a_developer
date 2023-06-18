@@ -41,7 +41,8 @@ data["Dystopia Residual"] = [
     7.284,
 ]
 
-# make a dictionary that maps column 'Region' to a color from plotly.colors.sequential
+# make a dictionary that maps column 'Region' to 
+# a color from plotly.colors.sequential
 
 MARKER_COLOR = {
     "Western Europe": sequential.speed[8],
@@ -76,15 +77,13 @@ def generate_graph(df):
     return fig1
 
 
-# create a dict data point that can be passed as data to the graph to 'extend' it
+# create a dict data point that can be passed as 
+# data to the graph to 'extend' it
 def generate_return_value(n_interval):
-    return (
-        dict(
-            x=[[data.loc[n_interval, "Happiness Rank"]]],
+    return ({x=[[data.loc[n_interval, "Happiness Rank"]]],
             y=[[data.loc[n_interval, "Dystopia Residual"]]],
-            marker_color=[[MARKER_COLOR[data.loc[n_interval, "Region"]]]],
-        ),
-    )
+            marker_color=[[MARKER_COLOR[data.loc[n_interval, "Region"]]]]
+            })
 
 
 # setup data
